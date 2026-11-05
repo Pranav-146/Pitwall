@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from pitwall.cleaning import FLAG_COLUMNS, flag_laps, neutralised_periods
+from pitwall.cleaning import FLAG_COLUMNS, INFO_COLUMNS, flag_laps, neutralised_periods
 from pitwall.openf1 import (
     find_race_session,
     load_laps,
@@ -55,7 +55,7 @@ def report(country: str) -> dict:
         print(by_lap[by_lap["flagged"] > 0].round(3).T.to_string())
 
     other_rules = ["is_lap1", "is_inlap", "is_outlap", "is_sc_vsc_red"]
-    unexplained = ~flagged[[*other_rules, "is_wet"]].any(axis=1)
+    unexplained = ~flagged[[*other_rules, "is_wet", *INFO_COLUMNS]].any(axis=1)
     missed = flagged[(flagged["ratio"] > SLOW_RATIO) & unexplained]
     print(f"slow by >15% but not lap1/pit/neutralised/wet: {len(missed)}")
     if not missed.empty:
@@ -68,7 +68,7 @@ def report(country: str) -> dict:
     print(f"pit rows: {len(pits)} kept, {int(pit_flags.sum())} under SC/VSC/red")
 
     row = {"Race": country, "Laps": len(flagged)}
-    row |= {column: int(flagged[column].sum()) for column in FLAG_COLUMNS}
+    row |= {column: int(flagged[column].sum()) for column in [*FLAG_COLUMNS, *INFO_COLUMNS]}
     row["Any flag"] = int(flagged[FLAG_COLUMNS].any(axis=1).sum())
     for threshold in THRESHOLDS:
         counts = flag_laps(laps, race_control, weather, slow_threshold=threshold)

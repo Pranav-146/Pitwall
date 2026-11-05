@@ -16,6 +16,8 @@ FLAG_COLUMNS = [
     "is_blue_flag",
     "is_wet",
 ]
+# Informational only: models keep these laps unless they choose otherwise.
+INFO_COLUMNS = ["is_rain_reported"]
 WET_COMPOUNDS = {"INTERMEDIATE", "WET"}
 SLOW_THRESHOLD_SECONDS = 1.5
 ROLLING_WINDOW_LAPS = 5
@@ -66,6 +68,14 @@ def _during(times: pd.Series, start: pd.Series, end: pd.Series) -> pd.Series:
     return pd.Series(last > first, index=start.index)
 
 
+def _confirmed_rain(weather: pd.DataFrame) -> pd.Series:
+    """Times of rain samples with a rain sample next to them. One alone is a false alarm."""
+    ordered = weather.sort_values("date", kind="stable")
+    rain = ordered["rainfall"] > 0
+    paired = rain & (rain.shift(1, fill_value=False) | rain.shift(-1, fill_value=False))
+    return ordered.loc[paired, "date"]
+
+
 def _slow_outliers(laps: pd.DataFrame, threshold: float) -> pd.Series:
     """Laps slower than the rolling median of their own stint by more than threshold."""
     excluded = laps[["is_lap1", "is_inlap", "is_outlap", "is_sc_vsc_red"]].any(axis=1)
@@ -106,6 +116,6 @@ def flag_laps(
         rows = flagged["DriverNumber"] == number
         flagged.loc[rows, "is_blue_flag"] = _during(messages["date"], start[rows], end[rows])
 
-    rain = weather.loc[weather["rainfall"] > 0, "date"]
-    flagged["is_wet"] = flagged["Compound"].isin(WET_COMPOUNDS) | _during(rain, start, end)
+    flagged["is_wet"] = flagged["Compound"].isin(WET_COMPOUNDS)
+    flagged["is_rain_reported"] = _during(_confirmed_rain(weather), start, end)
     return flagged

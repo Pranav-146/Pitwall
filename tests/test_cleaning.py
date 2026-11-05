@@ -1,6 +1,6 @@
 import pandas as pd
 
-from pitwall.cleaning import FLAG_COLUMNS, flag_laps, neutralised_periods
+from pitwall.cleaning import FLAG_COLUMNS, INFO_COLUMNS, flag_laps, neutralised_periods
 
 T0 = pd.Timestamp("2024-03-09T17:00:00+00:00")
 
@@ -132,15 +132,34 @@ def test_blue_flag_matches_by_time_for_that_driver_only():
     assert hits[["DriverNumber", "LapNumber"]].values.tolist() == [[2, 2]]
 
 
-def test_wet_from_compound_or_rain():
-    rain = pd.DataFrame({"date": [at(100)], "rainfall": [1]})
-    assert flag_laps(make_laps([90.0] * 3), NO_MESSAGES, rain)["is_wet"].tolist() == [
-        False,
-        True,
-        False,
-    ]
+def test_is_wet_comes_from_compound_only():
     inters = make_laps([90.0] * 3, compound="INTERMEDIATE")
     assert flag_laps(inters, NO_MESSAGES, DRY)["is_wet"].all()
+    rain = pd.DataFrame({"date": [at(100), at(160)], "rainfall": [1, 1]})
+    assert not flag_laps(make_laps([90.0] * 3), NO_MESSAGES, rain)["is_wet"].any()
+
+
+def test_single_rain_sample_is_not_reported():
+    rain = pd.DataFrame({"date": [at(40), at(100), at(160)], "rainfall": [0, 1, 0]})
+    flagged = flag_laps(make_laps([90.0] * 3), NO_MESSAGES, rain)
+    assert not flagged["is_rain_reported"].any()
+
+
+def test_two_consecutive_rain_samples_are_reported():
+    rain = pd.DataFrame({"date": [at(40), at(100), at(190)], "rainfall": [0, 1, 1]})
+    flagged = flag_laps(make_laps([90.0] * 3), NO_MESSAGES, rain)
+    assert flagged["is_rain_reported"].tolist() == [False, True, True]
+
+
+def test_rain_samples_are_paired_in_time_order():
+    rain = pd.DataFrame({"date": [at(190), at(40), at(100)], "rainfall": [1, 0, 1]})
+    flagged = flag_laps(make_laps([90.0] * 3), NO_MESSAGES, rain)
+    assert flagged["is_rain_reported"].tolist() == [False, True, True]
+
+
+def test_rain_reported_is_not_an_exclusion_flag():
+    assert "is_rain_reported" in INFO_COLUMNS
+    assert "is_rain_reported" not in FLAG_COLUMNS
 
 
 def test_lap_with_missing_timing_is_kept():
