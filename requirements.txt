@@ -3,4 +3,6 @@ jupyter==1.1.1
 matplotlib==3.11.2
 numpy==2.5.4
 pandas==2.3.3
+pyarrow==26.0.1
+pytest==9.2.0
 scikit-learn==1.9.1
