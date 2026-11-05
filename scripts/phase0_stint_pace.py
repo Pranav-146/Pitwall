@@ -45,7 +45,7 @@ def plot_driver(ax, laps) -> None:
 
         start, end = stint["LapNumber"].min(), stint["LapNumber"].max()
         age = int(stint["TyreLife"].iloc[0]) - 1
-        label = f"{compound.title()} · {len(stint)} laps" + (f" · started {age} laps old" if age else "")
+        label = f"{compound.title()} · {len(stint)} laps" + (f" · age {age}" if age else "")
         ax.text((start + end) / 2, Y_MIN + 0.1, label, ha="center", va="bottom",
                 fontsize=9, color=MUTED)
         if end < laps["LapNumber"].max():
