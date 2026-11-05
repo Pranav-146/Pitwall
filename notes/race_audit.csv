@@ -1,0 +1,47 @@
+Year,Round,Race,SessionKey,Status,Stops,Corrections,Reasons,Pace order,Pace gaps,Broken at fuel 2/3/4s,Swap caught,Laps,Wet laps,Rain reported laps,Rain on slicks
+2023,1,Bahrain,7953,quarantined,50,0,no OpenF1 pit table,not tested,,,,,,,
+2023,2,Saudi Arabian,7779,quarantined,24,0,no OpenF1 pit table,not tested,,,,,,,
+2023,3,Australian,7787,quarantined,65,0,no OpenF1 pit table,not tested,,,,,,,
+2023,4,Azerbaijan,9070,quarantined,23,0,no OpenF1 pit table,not tested,,,,,,,
+2023,5,Miami,9078,quarantined,20,0,no OpenF1 pit table,not tested,,,,,,,
+2023,6,Monaco,9094,quarantined,37,0,no OpenF1 pit table,not tested,,,,,,,
+2023,7,Spanish,9102,pass,43,0,,broken,SOFT<MEDIUM -0.46s (n=14); MEDIUM<HARD -0.20s (n=13); SOFT<HARD -0.32s (n=17),3.0,ok,1312.0,0.0,0.0,0.0
+2023,8,Canadian,9110,quarantined,33,31,"car 22: stint ends [0, 2] but pit stops [1, 34]",ok,SOFT<MEDIUM +0.91s (n=1); MEDIUM<HARD +0.01s (n=17); SOFT<HARD +0.74s (n=2),1.0,broken,1318.0,0.0,0.0,0.0
+2023,9,Austrian,9118,pass,63,0,,ok,SOFT<MEDIUM +0.49s (n=1); MEDIUM<HARD +0.03s (n=18); SOFT<HARD +0.53s (n=1),0.0,broken,1355.0,0.0,0.0,0.0
+2023,10,British,9126,pass,24,0,,broken,SOFT<MEDIUM -0.32s (n=6); MEDIUM<HARD -0.16s (n=6); SOFT<HARD -0.48s (n=4),3.0,ok,974.0,0.0,0.0,0.0
+2023,11,Hungarian,9133,pass,36,0,,broken,SOFT<MEDIUM -0.10s (n=1); MEDIUM<HARD -0.28s (n=16); SOFT<HARD -0.63s (n=3),3.0,ok,1255.0,0.0,0.0,0.0
+2023,12,Belgian,9141,pass,37,0,,broken,SOFT<MEDIUM -0.08s (n=19); MEDIUM<HARD -0.63s (n=1); SOFT<HARD +0.37s (n=1),2.0,ok,817.0,0.0,105.0,105.0
+2023,13,Dutch,9149,pass,101,0,,ok,SOFT<MEDIUM +1.49s (n=8),0.0,broken,1344.0,328.0,325.0,150.0
+2023,14,Italian,9157,pass,25,0,,ok,MEDIUM<HARD +0.48s (n=19),0.0,broken,968.0,0.0,0.0,0.0
+2023,15,Singapore,9165,pass,25,0,,ok,SOFT<MEDIUM +0.05s (n=2); MEDIUM<HARD +0.75s (n=17); SOFT<HARD +0.32s (n=3),0.0,broken,1091.0,0.0,0.0,0.0
+2023,16,Japanese,9173,pass,43,0,,broken,SOFT<MEDIUM +0.15s (n=4); MEDIUM<HARD -0.46s (n=12); SOFT<HARD -0.55s (n=3),3.0,broken,886.0,0.0,0.0,0.0
+2023,17,Qatar,9221,pass,54,0,,broken,SOFT<MEDIUM +1.34s (n=2); MEDIUM<HARD -0.49s (n=18); SOFT<HARD -0.55s (n=2),3.0,ok,1009.0,0.0,0.0,0.0
+2023,18,United States,9213,pass,36,0,,ok,SOFT<MEDIUM +1.47s (n=2); MEDIUM<HARD +0.12s (n=18); SOFT<HARD +1.71s (n=2),1.0,broken,1017.0,0.0,0.0,0.0
+2023,19,Mexico City,9181,pass,38,0,,ok,SOFT<MEDIUM +0.39s (n=1); MEDIUM<HARD +0.17s (n=19); SOFT<HARD -0.56s (n=1),1.0,broken,1286.0,0.0,0.0,0.0
+2023,20,São Paulo,9205,pass,67,0,,ok,SOFT<MEDIUM +0.05s (n=15),1.0,broken,1112.0,0.0,0.0,0.0
+2023,21,Las Vegas,9189,pass,31,0,,broken,SOFT<MEDIUM -1.89s (n=1); MEDIUM<HARD -1.01s (n=15); SOFT<HARD -0.93s (n=1),3.0,ok,949.0,0.0,0.0,0.0
+2023,22,Abu Dhabi,9197,pass,37,0,,broken,MEDIUM<HARD -0.20s (n=19),2.0,ok,1159.0,0.0,0.0,0.0
+2024,1,Bahrain,9472,pass,43,0,,broken,SOFT<HARD -0.51s (n=20),3.0,ok,1129.0,0.0,0.0,0.0
+2024,2,Saudi Arabian,9480,pass,19,0,,ok,SOFT<MEDIUM +0.81s (n=3); MEDIUM<HARD +0.30s (n=13); SOFT<HARD +0.51s (n=2),0.0,broken,902.0,0.0,0.0,0.0
+2024,3,Australian,9488,corrected,36,36,,broken,MEDIUM<HARD -0.03s (n=15); SOFT<HARD -0.15s (n=3),2.0,ok,998.0,0.0,0.0,0.0
+2024,4,Japanese,9496,pass,54,0,,broken,SOFT<MEDIUM -0.06s (n=3); MEDIUM<HARD -0.39s (n=14); SOFT<HARD -0.45s (n=7),2.0,ok,908.0,0.0,0.0,0.0
+2024,5,Chinese,9673,pass,40,0,,broken,SOFT<MEDIUM -0.76s (n=5); MEDIUM<HARD -0.48s (n=11); SOFT<HARD -0.46s (n=2),3.0,ok,1033.0,0.0,0.0,0.0
+2024,6,Miami,9507,pass,28,0,,broken,SOFT<MEDIUM +0.22s (n=3); MEDIUM<HARD -0.01s (n=17); SOFT<HARD +0.10s (n=2),3.0,broken,1112.0,0.0,0.0,0.0
+2024,7,Emilia Romagna,9515,pass,27,0,,ok,SOFT<MEDIUM +0.15s (n=2); MEDIUM<HARD +0.37s (n=19); SOFT<HARD -0.65s (n=2),0.0,broken,1239.0,0.0,0.0,0.0
+2024,8,Monaco,9523,corrected,23,23,,broken,SOFT<MEDIUM +3.64s (n=1); MEDIUM<HARD -3.87s (n=5); SOFT<HARD +2.28s (n=2),3.0,ok,1237.0,0.0,0.0,0.0
+2024,9,Canadian,9531,corrected,42,41,,untestable,MEDIUM<HARD -0.37s (n=2),0.0,untestable,1272.0,846.0,342.0,3.0
+2024,10,Spanish,9539,pass,42,0,,broken,SOFT<MEDIUM -0.17s (n=19); MEDIUM<HARD -0.14s (n=12); SOFT<HARD -0.23s (n=13),2.0,ok,1310.0,0.0,0.0,0.0
+2024,11,Austrian,9550,pass,45,0,,ok,SOFT<MEDIUM +0.42s (n=2); MEDIUM<HARD +0.33s (n=20); SOFT<HARD +0.88s (n=2),0.0,broken,1407.0,0.0,0.0,0.0
+2024,12,British,9558,pass,45,0,,broken,SOFT<MEDIUM -0.10s (n=13); MEDIUM<HARD -0.19s (n=3); SOFT<HARD +0.60s (n=2),3.0,ok,962.0,235.0,422.0,193.0
+2024,13,Hungarian,9566,pass,40,0,,broken,SOFT<MEDIUM +0.16s (n=4); MEDIUM<HARD -0.53s (n=17); SOFT<HARD -0.71s (n=6),3.0,broken,1356.0,0.0,0.0,0.0
+2024,14,Belgian,9574,quarantined,34,0,"car 3: stint ends [8, 21, 44] but pit stops [8, 21] | car 14: stint ends [13, 44] but pit stops [13] | car 18: stint ends [12, 44] but pit stops [12] | car 22: stint ends [15, 44] but pit stops [15]",broken,SOFT<MEDIUM +0.81s (n=2); MEDIUM<HARD -0.68s (n=19); SOFT<HARD +0.23s (n=2),3.0,ok,842.0,0.0,0.0,0.0
+2024,15,Dutch,9582,pass,26,0,,broken,SOFT<MEDIUM +0.18s (n=4); MEDIUM<HARD -0.39s (n=19); SOFT<HARD -0.01s (n=5),3.0,broken,1426.0,0.0,0.0,0.0
+2024,16,Italian,9590,pass,30,0,,broken,SOFT<MEDIUM +1.02s (n=1); MEDIUM<HARD -0.20s (n=19); SOFT<HARD +0.97s (n=1),2.0,ok,1009.0,0.0,0.0,0.0
+2024,17,Azerbaijan,9598,pass,22,0,,broken,MEDIUM<HARD -0.09s (n=16),2.0,ok,975.0,0.0,0.0,0.0
+2024,18,Singapore,9606,pass,23,0,,broken,SOFT<MEDIUM -0.67s (n=4); MEDIUM<HARD +0.14s (n=16); SOFT<HARD -0.19s (n=2),3.0,broken,1179.0,0.0,0.0,0.0
+2024,19,United States,9617,pass,23,0,,ok,SOFT<MEDIUM -0.78s (n=1); MEDIUM<HARD +0.31s (n=19); SOFT<HARD -0.91s (n=1),1.0,broken,1059.0,0.0,0.0,0.0
+2024,20,Mexico City,9625,pass,21,0,,ok,SOFT<MEDIUM +0.87s (n=3); MEDIUM<HARD +0.62s (n=14); SOFT<HARD +1.03s (n=3),1.0,broken,1216.0,0.0,0.0,0.0
+2024,21,São Paulo,9636,pass,35,0,,untestable,,0.0,untestable,1137.0,1137.0,848.0,0.0
+2024,22,Las Vegas,9644,pass,39,0,,broken,SOFT<MEDIUM +1.17s (n=2); MEDIUM<HARD -0.03s (n=19); SOFT<HARD +0.24s (n=3),3.0,broken,940.0,0.0,0.0,0.0
+2024,23,Qatar,9655,quarantined,60,0,car 31: stint ends [1] but pit stops [] | car 43: stint ends [1] but pit stops [] | unknown compound labels: {'UNKNOWN': 2},broken,SOFT<MEDIUM -0.26s (n=2); MEDIUM<HARD -0.19s (n=4),2.0,ok,944.0,0.0,0.0,0.0
+2024,24,Abu Dhabi,9662,pass,28,0,,ok,SOFT<MEDIUM -0.23s (n=1); MEDIUM<HARD +0.34s (n=17); SOFT<HARD -0.08s (n=1),1.0,broken,1037.0,0.0,0.0,0.0

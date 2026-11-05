@@ -26,7 +26,7 @@ only needs the APIs once.
 | LapNumber | 1-based |
 | LapTimeSeconds | OpenF1 `lap_duration`; lap 1 runs long, see below. Null on some laps |
 | LapStart | UTC; null on some lap 1s |
-| Stint, Compound | from OpenF1 `stints`, joined on lap range. **Wrong by a lap in Canada 2024** |
+| Stint, Compound | from OpenF1 `stints`, boundaries checked against `pit` by `snap_stints_to_pits` |
 | TyreLife | `tyre_age_at_start + laps into stint`, so a new tyre reads 1 on its first lap |
 | PitIn | lap number appears in OpenF1 `pit` |
 | PitOut | OpenF1 `is_pit_out_lap`, raw |
@@ -58,11 +58,18 @@ only needs the APIs once.
 - **Compound names are relative.** SOFT means a different Pirelli compound at different
   tracks, which matters for the cross-race model in Phase 1.
 - **Sector 1 and speed trap fields are often null.**
+- **OpenF1 has no `pit` table for 2023 rounds 1-6.** It answers 404 "No results found".
+- **OpenF1 lists the cancelled 2023 Imola race**, with `is_cancelled` set. `race_calendar`
+  drops it and joins to Jolpica rounds by order, because Las Vegas 2024 is dated a day apart.
+- **`stints` can run past the race.** Belgium 2024 has a lap 45 stint for 4 cars in a 44-lap
+  race. Qatar 2024 has an `UNKNOWN` first stint and a phantom second for 2 lap-1 retirements.
 
 ## Tyre data verification
 
-Run with `scripts/verify_tyres.py`. Pit laps are compared against Jolpica, an independent
-source. Saudi was required for its safety car, Spain is a dry race with all three compounds,
+`scripts/audit_races.py` now runs this on every race, and `load_model_laps` refuses a race
+that fails. Results are in `RESULTS.md` and `race_audit.csv`. The table below is the original
+4-race check of raw data, from `scripts/verify_tyres.py`. Pit laps are compared against Jolpica,
+an independent source. Saudi was required for its safety car, Spain is a dry race with all three compounds,
 and Canada exercises the wet path.
 
 | Check | Bahrain | Saudi | Spain | Canada |
@@ -77,21 +84,26 @@ and Canada exercises the wet path.
 
 ### Mismatch log
 
-- **Canada 2024: `stints` boundaries are one lap early on 41 of 42 stops.** `pit` agrees with
-  Jolpica on all 42, so `stints` is the wrong table. Each in-lap gets the next stint's
-  compound, and TyreLife resets a lap early. **Not corrected yet.** The 82 and 102 counts
-  above are this one fault counted from both sides, plus lap 1 in the out-lap check.
+- **One lap early stints:** Canada 2023 (31 stops), Australia 2024 (36), Monaco 2024 (23),
+  Canada 2024 (41). `pit` agrees with Jolpica on all of them, so `stints` is the wrong table.
+  The in-lap got the next stint's compound and TyreLife reset a lap early. Corrected in
+  `load_laps`, and every correction is in `stint_corrections.csv`. Canada 2024's 82 and 102
+  counts above are this one fault counted from both sides, plus lap 1 in the out-lap check.
+- **Canada 2023:** Tsunoda has a stint break on lap 2 with no stop, and a lap 34 stop with no
+  stint break. Not the known pattern, so the race is quarantined.
 - **Saudi 2024:** GAS and STR have a final partial lap outside any stint.
 - **Canada 2024:** SAR, PER, LEC, ALB and SAI have the same retirement gap.
-- **Spain 2024:** a single `rainfall=1` weather sample at 13:06:38 sets `is_wet` on 20 laps
-  in a race run entirely on slicks. Likely a false alarm.
+- **Spain 2024:** a single `rainfall=1` weather sample at 13:06:38 in a race run entirely on
+  slicks. `is_rain_reported` now needs 2 consecutive samples, so this no longer flags any lap.
 - **Bahrain 2024:** a [race report](https://lastwordonsports.com/motorsports/?p=18819) has
   Sargeant stopping first on lap 12. OpenF1 has Hulkenberg on lap 1 and Sargeant on lap 10,
   and Jolpica matches OpenF1 on all 43 stops, so the report looks wrong.
 
 ### What this does not prove
 
-Jolpica confirms when tyres changed, not which tyres went on. Compound labels are only
-covered by the two-compound rule, plus the Bahrain race report. Used-set ages are only
-checked for plausibility. One failure in four races means other races may have the same
-stint fault, and only these four have been checked.
+Jolpica confirms when tyres changed, not which tyres went on. Compound labels are covered by
+the two-compound rule in dry races, plus the Bahrain race report. The pace-order checks can't
+verify them race by race (see `RESULTS.md`). Used-set ages aren't part of the audit: across all 2659
+stints none is negative and 11 start over 10 laps old, 5 of them inters at Dutch 2023. The oldest
+is Leclerc on a 25-lap hard at Spain 2023, which is unverified. An error on a single stint would
+pass everything here.
