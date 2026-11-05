@@ -5,6 +5,7 @@ Column names follow FastF1 (Driver, LapNumber, Stint, Compound, TyreLife, ...) s
 rest of the code does not care which source a table came from.
 """
 
+import http.client
 import json
 import time
 import urllib.error
@@ -16,10 +17,15 @@ from pathlib import Path
 import pandas as pd
 
 from pitwall.data import REPO_ROOT
+from pitwall.stints import snap_stints_to_pits
 
 BASE_URL = "https://api.openf1.org/v1"
 JOLPICA_URL = "https://api.jolpi.ca/ergast/f1"
 RAW_DIR = REPO_ROOT / "data" / "raw"
+
+
+class MissingTable(ValueError):
+    """The API has no such table for this session."""
 
 
 def fetch_json(url: str, retries: int = 5):
@@ -31,6 +37,10 @@ def fetch_json(url: str, retries: int = 5):
             return payload
         except urllib.error.HTTPError as err:
             if err.code != 429 or attempt == retries - 1:
+                raise
+            time.sleep(2**attempt)
+        except (TimeoutError, urllib.error.URLError, http.client.IncompleteRead):
+            if attempt == retries - 1:
                 raise
             time.sleep(2**attempt)
 
@@ -50,9 +60,14 @@ def cached_table(
 def openf1_table(endpoint: str, **params) -> pd.DataFrame:
     def fetch() -> pd.DataFrame:
         url = f"{BASE_URL}/{endpoint}?{urllib.parse.urlencode(params)}"
-        payload = fetch_json(url)
-        if not isinstance(payload, list):  # OpenF1 answers {"detail": ...} when empty
-            raise ValueError(f"No data from {url}: {payload}")
+        try:
+            payload = fetch_json(url)
+        except urllib.error.HTTPError as err:
+            if err.code != 404:  # OpenF1 answers 404 when a table doesn't exist for a session
+                raise
+            raise MissingTable(f"No data from {url}") from err
+        if not isinstance(payload, list):  # or {"detail": ...} with a 200
+            raise MissingTable(f"No data from {url}: {payload}")
         return pd.DataFrame(payload)
 
     suffix = "_".join(f"{k}-{v}" for k, v in sorted(params.items()))
@@ -65,6 +80,38 @@ def find_race_session(year: int, country: str) -> int:
     if len(races) != 1:
         raise ValueError(f"Expected one race for {country} {year}, found {len(races)}")
     return int(races["session_key"].iloc[0])
+
+
+def race_calendar(year: int) -> pd.DataFrame:
+    """Every race held in a season, with its Jolpica round and OpenF1 session key."""
+
+    def fetch() -> pd.DataFrame:
+        races = fetch_json(f"{JOLPICA_URL}/{year}.json?limit=100")["MRData"]["RaceTable"]["Races"]
+        return pd.json_normalize(races)
+
+    schedule = cached_table(f"jolpica_schedule_{year}", fetch)
+    schedule = schedule.assign(round=schedule["round"].astype(int)).sort_values("round")
+
+    sessions = openf1_table("sessions", year=year, session_name="Race")
+    sessions = sessions[~sessions["is_cancelled"].astype(bool)].sort_values("date_start")
+    if len(sessions) != len(schedule):
+        raise ValueError(f"{year}: {len(sessions)} OpenF1 races, {len(schedule)} on Jolpica")
+
+    # Joined by order: Jolpica can date a race a day off OpenF1, as with Las Vegas 2024.
+    held = pd.to_datetime(sessions["date_start"], format="ISO8601").dt.tz_localize(None)
+    listed = pd.to_datetime(schedule["date"])
+    drift = (held.reset_index(drop=True) - listed.reset_index(drop=True)).dt.days.abs().max()
+    if drift > 2:
+        raise ValueError(f"{year}: calendars disagree by {drift} days")
+
+    return pd.DataFrame(
+        {
+            "Year": year,
+            "Round": schedule["round"].to_numpy(),
+            "Race": schedule["raceName"].str.removesuffix(" Grand Prix").to_numpy(),
+            "SessionKey": sessions["session_key"].astype(int).to_numpy(),
+        }
+    )
 
 
 def load_results(year: int, round_number: int) -> pd.DataFrame:
@@ -158,14 +205,13 @@ def load_weather(session_key: int) -> pd.DataFrame:
 def load_laps(session_key: int) -> pd.DataFrame:
     """Every timed lap joined to its stint and pit data. Nothing is dropped."""
     laps = openf1_table("laps", session_key=session_key)
-    stints = load_stints(session_key)
     pits = load_pits(session_key)
+    stints = snap_stints_to_pits(load_stints(session_key), pits).stints
     drivers = openf1_table("drivers", session_key=session_key)
 
     # A retiring driver's last partial lap has no stint row, but they are on the same tyres.
     last_stints = stints.groupby("driver_number")["stint_number"].idxmax()
     last_laps = laps.groupby("driver_number")["lap_number"].max()
-    stints = stints.copy()
     stints.loc[last_stints, "lap_end"] = (
         stints.loc[last_stints, "driver_number"]
         .map(last_laps)

@@ -1,7 +1,8 @@
-"""Check OpenF1 tyre data for internal consistency before it feeds the Phase 1 model.
+"""Inspect raw, uncorrected OpenF1 tyre data for one-off digging into a race.
 
 Per race: stints must tile each driver's laps, stint boundaries must line up with pit
 laps, dry-race finishers must use two compounds, and tyre ages must be plausible.
+The check that gates modelling is `scripts/audit_races.py`, not this one.
 """
 
 import pandas as pd
@@ -17,14 +18,11 @@ from pitwall.openf1 import (
     load_stints,
     openf1_table,
 )
+from pitwall.quality import is_finisher
 
 YEAR = 2024
 RACES = [("Bahrain", 1), ("Saudi Arabia", 2), ("Canada", 9), ("Spain", 10)]
 MAX_SANE_START_AGE = 10
-
-
-def is_finisher(status: str) -> bool:
-    return status in ("Finished", "Lapped") or status.startswith("+")
 
 
 def check_coverage(stints, raw_laps, names) -> list[str]:
