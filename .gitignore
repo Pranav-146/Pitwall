@@ -1,0 +1,17 @@
+# Data / FastF1 cache
+data/
+cache/
+.fastf1-cache/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Secrets
+.env
